@@ -142,10 +142,6 @@ Swagger API Docs:
 http://localhost:5000/api-docs
 ```
 
-```
-
-```
-
 ## Seed Script
 
 To populate the database with realistic test data:
