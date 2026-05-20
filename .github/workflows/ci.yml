@@ -30,7 +30,7 @@ jobs:
       - name: Run backend tests
         run: |
           cd backend
-          npm test
+          node node_modules/jest/bin/jest.js
 
   docker-build:
     runs-on: ubuntu-latest
