@@ -1,26 +1,20 @@
-require("dotenv").config();
-
+const mongoose = require("mongoose");
 const connectDB = require("./config/db");
-const logger = require("./utils/logger");
 const Doctor = require("./models/Doctor");
 const Patient = require("./models/Patient");
 const Appointment = require("./models/Appointment");
 
-const seedData = async () => {
+const seedDatabase = async () => {
   try {
-    // Connect database
     await connectDB();
 
-    logger.info("Starting database seed");
+    console.log("MongoDB Connected");
 
     // Clear old data
-    await Appointment.deleteMany();
     await Doctor.deleteMany();
     await Patient.deleteMany();
+    await Appointment.deleteMany();
 
-    logger.info("Old data cleared");
-
-    // Insert doctors
     const doctors = await Doctor.insertMany([
       {
         name: "Dr Ahmad",
@@ -37,53 +31,108 @@ const seedData = async () => {
         speciality: "Dermatology",
 
         workingHours: {
-          start: "12:00",
-          end: "20:00",
+          start: "09:00",
+          end: "17:00",
+        },
+      },
+
+      {
+        name: "Dr Karim",
+        speciality: "Neurology",
+
+        workingHours: {
+          start: "10:00",
+          end: "18:00",
         },
       },
     ]);
 
-    logger.info("Doctors inserted");
-
-    // Insert patients
     const patients = await Patient.insertMany([
       {
         name: "Ali",
-        email: "ali@test.com",
         phone: "03123456",
+        email: "ali@test.com",
       },
 
       {
-        name: "Sara",
-        email: "sara@test.com",
-        phone: "03987654",
+        name: "Maya",
+        phone: "71111111",
+        email: "maya@test.com",
+      },
+
+      {
+        name: "John",
+        phone: "70123456",
+        email: "john@test.com",
+      },
+
+      {
+        name: "Lina",
+        phone: "76123456",
+        email: "lina@test.com",
+      },
+
+      {
+        name: "Omar",
+        phone: "81123456",
+        email: "omar@test.com",
       },
     ]);
 
-    logger.info("Patients inserted");
+    await Appointment.insertMany([
+      {
+        doctorId: doctors[0]._id,
+        patientId: patients[0]._id,
+        start: new Date("2026-05-20T08:00:00"),
+        end: new Date("2026-05-20T08:30:00"),
+        status: "Booked",
+        reason: "Heart Checkup",
+      },
 
-    // Insert appointment
-    await Appointment.create({
-      doctorId: doctors[0]._id,
-      patientId: patients[0]._id,
+      {
+        doctorId: doctors[0]._id,
+        patientId: patients[1]._id,
+        start: new Date("2026-05-20T09:00:00"),
+        end: new Date("2026-05-20T09:30:00"),
+        status: "Cancelled",
+        reason: "Follow-up",
+      },
 
-      start: new Date("2026-05-20T10:00:00"),
+      {
+        doctorId: doctors[1]._id,
+        patientId: patients[2]._id,
+        start: new Date("2026-05-21T11:00:00"),
+        end: new Date("2026-05-21T11:30:00"),
+        status: "Booked",
+        reason: "Skin Allergy",
+      },
 
-      end: new Date("2026-05-20T10:30:00"),
+      {
+        doctorId: doctors[2]._id,
+        patientId: patients[3]._id,
+        start: new Date("2026-05-22T13:00:00"),
+        end: new Date("2026-05-22T13:30:00"),
+        status: "Booked",
+        reason: "Migraine",
+      },
 
-      reason: "General Checkup",
-    });
+      {
+        doctorId: doctors[1]._id,
+        patientId: patients[4]._id,
+        start: new Date("2026-05-23T15:00:00"),
+        end: new Date("2026-05-23T15:30:00"),
+        status: "Cancelled",
+        reason: "Routine Check",
+      },
+    ]);
 
-    logger.info("Appointments inserted");
-
-    logger.info("Database seed completed successfully");
+    console.log("Seed data inserted");
 
     process.exit();
   } catch (error) {
-    logger.error(error.message);
-
+    console.log(error);
     process.exit(1);
   }
 };
 
-seedData();
+seedDatabase();
